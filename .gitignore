@@ -1,6 +1,3 @@
-# Ignore Go build artifacts
-/urlshortener
-
 # Ignore IDE/editor files
 *.log
 *.tmp

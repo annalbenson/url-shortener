@@ -1,0 +1,12 @@
+# Ignore Go build artifacts
+/urlshortener
+
+# Ignore IDE/editor files
+*.log
+*.tmp
+*.swp
+.DS_Store
+.vscode/
+
+# Ignore Go test binary (if you run `go test -c`)
+*.test

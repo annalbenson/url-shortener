@@ -1,0 +1,42 @@
+name: Deploy to Lightsail
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+
+    - name: Build Go app for Linux
+      run: GOOS=linux GOARCH=amd64 go build -o urlshortener
+
+    - name: Copy binary to Lightsail via SCP
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.LIGHTSAIL_IP }}
+        username: ubuntu
+        key: ${{ secrets.LIGHTSAIL_SSH_PRIVATE_KEY }}
+        source: "urlshortener"
+        target: "~/urlshortener"
+
+    - name: SSH into Lightsail and restart app
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.LIGHTSAIL_IP }}
+        username: ubuntu
+        key: ${{ secrets.LIGHTSAIL_SSH_PRIVATE_KEY }}
+        script: |
+          pkill urlshortener || true
+          chmod +x ~/urlshortener
+          nohup ~/urlshortener > output.log 2>&1 &

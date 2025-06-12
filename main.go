@@ -2,6 +2,7 @@ package main
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -18,5 +19,6 @@ func main() {
 	http.HandleFunc("/shorten", ShortenFormHandler)
 	http.HandleFunc("/s/", RedirectHandler)
 
-	http.ListenAndServe(":8080", nil)
+	log.Printf("Starting server")
+	http.ListenAndServe("0.0.0.0:8080", nil)
 }

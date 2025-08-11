@@ -28,9 +28,9 @@ jobs:
         username: ubuntu
         key: ${{ secrets.LIGHTSAIL_SSH_PRIVATE_KEY }}
         source: "urlshortener"
-        target: "~/urlshortener"
+        target: "~"
 
-    - name: SSH into Lightsail and restart app
+    - name: Restart Go app via SSH
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.LIGHTSAIL_IP }}

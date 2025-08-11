@@ -1,16 +1,23 @@
 package main
 
 import (
+	"embed"
 	"html/template"
 	"log"
 	"net/http"
 )
 
-var tmpl = template.Must(template.ParseFiles("static/index.html"))
+//go:embed static/*
+var staticFiles embed.FS
+
+var tmpl = template.Must(template.ParseFS(staticFiles, "static/index.html"))
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	recent := GetRecent()
-	tmpl.Execute(w, recent)
+	err := tmpl.Execute(w, recent)
+	if err != nil {
+		http.Error(w, "Template execution error", http.StatusInternalServerError)
+	}
 }
 
 func main() {
@@ -20,5 +27,9 @@ func main() {
 	http.HandleFunc("/s/", RedirectHandler)
 
 	log.Printf("Starting server")
-	http.ListenAndServe("0.0.0.0:8080", nil)
+	err := http.ListenAndServe("0.0.0.0:8080", nil)
+	if err != nil {
+		log.Fatalf("Server failed: %v", err)
+	}
+
 }
